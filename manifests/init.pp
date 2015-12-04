@@ -42,7 +42,30 @@
 #
 # Copyright 2015 Your name here, unless otherwise noted.
 #
-class worldofcontainers {
-
-
+application worldofcontainers (
+  $dbuser  = 'container',
+  $dbpass  = 'c0nt41n3r',
+) {
+  worldofcontainers::profile::db { $name:
+    dbuser => $dbuser,
+    dbpass => $dbpass,
+    export => Db[$name],
+  }
+  worldofcontainers::profile::memcache { $name:
+    export => Cache[$name],
+  }
+  worldofcontainers::profile::citiesapi { $name:
+    consume => [Db[$name],Cache[$name]],
+    port    => 3000,
+    export  => Citiesapi[$name],
+  }
+  worldofcontainers::profile::infoapi { $name:
+    consume => [Db[$name],Cache[$name]],
+    port    => 4000,
+    export  => Infoapi[$name],
+  }
+  worldofcontainers::profile::http { $name:
+    consume => [Citiesapi[$name],Infoapi[$name]],
+    export  => Http[$name],
+  }
 }

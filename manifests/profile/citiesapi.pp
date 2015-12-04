@@ -12,6 +12,11 @@ define worldofcontainers::profile::api (
 
 {
   include docker
+  firewall { "allow HTTP connections from Web Servers":
+    dport   => $port,
+    proto  => tcp,
+    action => accept,
+  }
   exec {'retrieve-dockerfile':
     command => "/usr/bin/curl -O /tmp/api-Dockerfile https://raw.githubusercontent.com/$repo/$version/api/Dockerfile",
     creates => '/tmp/api-Dockerfile',

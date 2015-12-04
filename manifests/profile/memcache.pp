@@ -1,20 +1,11 @@
 define worldofcontainers::profile::memcache (
   $port = 11211,
   $host = $::fqdn,
-  $citiesapiip,
-  $infoapiip,
 )
 
 {
-  firewall { "allow memcache connections from Cities API Servers":
+  firewall { "allow memcache connections from API Servers":
     dport   => $port,
-    source  => $citiesapiip,
-    proto  => tcp,
-    action => accept,
-  }
-  firewall { "allow memcache connections from Info API Servers":
-    dport   => $port,
-    source  => $infoapiip,
     proto  => tcp,
     action => accept,
   }
@@ -32,11 +23,5 @@ define worldofcontainers::profile::memcache (
   }
   }  
   Worldofcontainers::Profile::Memcache produces Cache {
-  }
-  Worldofcontainers::Profile::Http consumes Citiesapi {
-    $ip = $citiesapiip,
-  }
-  Worldofcontainers::Profile::Http consumes Infoapi {
-    $ip = $infoapiip,
   }
 

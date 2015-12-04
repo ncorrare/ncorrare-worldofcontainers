@@ -9,6 +9,11 @@ define worldofcontainers::profile::http (
 
 {
   include docker
+  firewall { "allow HTTP connections":
+    dport   => $port,
+    proto  => tcp,
+    action => accept,
+  }
   exec {'retrieve-dockerfile':
     command => "/usr/bin/curl -O /tmp/http-dockerfile https://raw.githubusercontent.com/$repo/$version/web/Dockerfile",
     creates => '/tmp/http-Dockerfile',
