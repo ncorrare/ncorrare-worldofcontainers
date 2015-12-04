@@ -1,0 +1,14 @@
+{
+  "name": "ncorrare-worldofcontainers",
+  "version": "0.1.0",
+  "author": "ncorrare",
+  "summary": "A module to deploy the \"World of containers\" application",
+  "license": "Apache-2.0",
+  "source": "https://github.com/ncorrare/ncorrare-worldofcontainers",
+  "project_page": "https://github.com/ncorrare/ncorrare-worldofcontainers",
+  "issues_url": "https://github.com/ncorrare/ncorrare-worldofcontainers/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+  ]
+}
+

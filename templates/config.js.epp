@@ -1,0 +1,3 @@
+var infoapihost = "<%= $iahost %>";
+var citiesapihost = "<%= $cahost %>";
+

@@ -1,0 +1,9 @@
+---
+db:
+  host: '<%= $dbhost %>'
+  user: '<%= $dbuser %>'
+  password: '<%= $dbpass %>'
+  name: '<%= $dbname %>'
+memcache:
+ host: '<%= $mchost %>:<%= $mcport %>'
+
