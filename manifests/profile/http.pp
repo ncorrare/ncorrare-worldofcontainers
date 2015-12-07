@@ -19,14 +19,13 @@ define worldofcontainers::profile::http (
     creates => '/tmp/http-Dockerfile',
   }
 
-  #file { '/config':
-  #  ensure => directory,
-  #}
+  file { '/config':
+    ensure => directory,
+  }->
 
   file { '/config/config.js':
     ensure  => file,
-    content => epp('worldofcontainers/config.js.epp'),
-    require => File['/config'],
+    content => epp('worldofcontainers/config.js.epp', { 'cahost' => $cahost, 'iahost' => $iahost}),
     }  
 
     docker::image { 'httpd':
@@ -39,7 +38,7 @@ define worldofcontainers::profile::http (
       image   => 'httpd',
       command => 'init',
       require => Docker::Image['httpd'],
-      ports   => [$port,80],
+      ports   => ["$port:80"],
     }
 }
 
