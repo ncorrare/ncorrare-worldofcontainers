@@ -1,8 +1,9 @@
 define worldofcontainers::profile::infoapi (
-  $version = '1.0.0',
-  $repo    = 'ncorrare/worldofcontainers',
-  $port    = 3000,
-  $host    = $::fqdn,
+  $version   = 'master',
+  $repo      = 'ncorrare/worldofcontainers',
+  $port      = 3000,
+  $host      = $::fqdn,
+  $interface = 'enp0s8',
   $dbname,
   $dbhost,
   $dbuser,
@@ -22,15 +23,18 @@ define worldofcontainers::profile::infoapi (
     command => "/usr/bin/curl https://raw.githubusercontent.com/$repo/$version/api/Dockerfile > /tmp/infoapi-Dockerfile",
     creates => '/tmp/infoapi-Dockerfile',
   }
-  file { '/tmp/config.yaml':
+  file { '/config':
+    ensure  => directory,
+  } ->
+  file { '/config/config.yaml':
     ensure  => file,
     content => epp('worldofcontainers/config.yaml.epp'),
   }
 
   docker::image { 'infoapi':
     ensure      => 'present',
-    image_tag   => '2.2.1',
-    require     => [Class['docker'], Exec['retrieve-dockerfile-infoapi'], File['/tmp/config.yaml']],
+    image_tag   => 'latest',
+    require     => [Class['docker'], Exec['retrieve-dockerfile-infoapi'], File['/config/config.yaml']],
     docker_file => '/tmp/infoapi-Dockerfile',
   }
 
@@ -39,6 +43,11 @@ define worldofcontainers::profile::infoapi (
     command => 'init',
     require => Docker::Image['infoapi'],
     ports   => [$port,3000],
+    notify  => Exec['ifup'],
+  }
+  exec { 'ifup':
+    command     => "/sbin/ifup $interface",
+    refreshonly => true,
   }
 }
 
