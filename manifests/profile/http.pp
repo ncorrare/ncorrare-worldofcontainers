@@ -39,6 +39,7 @@ define worldofcontainers::profile::http (
       command => 'init',
       require => Docker::Image['httpd'],
       ports   => ["$port:80"],
+      volumes => ["/config:/config:ro"],
     }
 }
 
