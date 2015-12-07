@@ -44,6 +44,7 @@ define worldofcontainers::profile::infoapi (
     require => Docker::Image['infoapi'],
     ports   => [$port,3000],
     notify  => Exec['ifup'],
+    volumes => ["/config:/config:ro"],
   }
   exec { 'ifup':
     command     => "/sbin/ifup $interface",
