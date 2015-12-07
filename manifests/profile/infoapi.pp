@@ -3,7 +3,6 @@ define worldofcontainers::profile::infoapi (
   $repo      = 'ncorrare/worldofcontainers',
   $port      = 3000,
   $host      = $::fqdn,
-  $interface = 'enp0s8',
   $dbname,
   $dbhost,
   $dbuser,
@@ -39,16 +38,11 @@ define worldofcontainers::profile::infoapi (
   }
 
   docker::run { "infoapi-$name":
-    image   => 'ruby',
+    image   => 'infoapi',
     command => 'init',
     require => Docker::Image['infoapi'],
-    ports   => [$port,3000],
-    notify  => Exec['ifup'],
+    ports   => ["$port,3000"],
     volumes => ["/config:/config:ro"],
-  }
-  exec { 'ifup':
-    command     => "/sbin/ifup $interface",
-    refreshonly => true,
   }
 }
 
