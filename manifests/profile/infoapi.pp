@@ -1,55 +1,55 @@
-define worldofcontainers::profile::api (
-  $version = $worldofcontainers::params::version,
-  $repo    = $worldofcontainers::params::repo,
+define worldofcontainers::profile::infoapi (
+  $version = '1.0.0',
+  $repo    = 'ncorrare/worldofcontainers',
   $port    = 3000,
-  $host    = $::fqdn
+  $host    = $::fqdn,
   $dbname,
   $dbhost,
   $dbuser,
   $dbpass,
   $mchost,
-) inherits worldofcontainers::params
+  $mcport,
+)
 
 {
   include docker
-  firewall { "allow HTTP connections from Web Servers":
+  firewall { "202 allow InfoApi connections from Web Servers":
     dport   => $port,
     proto  => tcp,
     action => accept,
   }
-  exec {'retrieve-dockerfile':
-    command => "/usr/bin/curl -O /tmp/api-Dockerfile https://raw.githubusercontent.com/$repo/$version/api/Dockerfile",
-    creates => '/tmp/api-Dockerfile',
+  exec {'retrieve-dockerfile-infoapi':
+    command => "/usr/bin/curl https://raw.githubusercontent.com/$repo/$version/api/Dockerfile > /tmp/infoapi-Dockerfile",
+    creates => '/tmp/infoapi-Dockerfile',
   }
   file { '/tmp/config.yaml':
     ensure  => file,
-    content => epp('config.yaml.epp'),
+    content => epp('worldofcontainers/config.yaml.epp'),
   }
 
-  docker::image { 'ruby':
+  docker::image { 'infoapi':
     ensure      => 'present',
     image_tag   => '2.2.1',
-    require     => [Class['docker'], Exec['retrieve-dockerfile'], File['/tmp/config.yaml']],
-    docker_file => '/tmp/api-Dockerfile',
+    require     => [Class['docker'], Exec['retrieve-dockerfile-infoapi'], File['/tmp/config.yaml']],
+    docker_file => '/tmp/infoapi-Dockerfile',
   }
 
-  docker::run { api-$name:
+  docker::run { "infoapi-$name":
     image   => 'ruby',
     command => 'init',
-    require => Docker::Image['ruby'],
+    require => Docker::Image['infoapi'],
     ports   => [$port,3000],
   }
 }
 
-Worldofcontainers::Profile::Api produces Infoapi {
-  $iahost = "$host:$port",
-  $ip     = $host,
+Worldofcontainers::Profile::Infoapi produces Infoapi {
+  iahost => "$host:$port",
   } 
 
-  Worldofcontainers::Profile::Api consumes Cache {
-    $mchost = $host,
-    $mcport = $port,
+  Worldofcontainers::Profile::Infoapi consumes Cache {
+    mchost => $host,
+    mcport => $port,
   }
 
-  Worldofcontainers::Profile::Api consumes Db {
+  Worldofcontainers::Profile::Infoapi consumes Db {
   }

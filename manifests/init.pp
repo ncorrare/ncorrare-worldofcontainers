@@ -66,6 +66,5 @@ application worldofcontainers (
   }
   worldofcontainers::profile::http { $name:
     consume => [Citiesapi[$name],Infoapi[$name]],
-    export  => Http[$name],
   }
 }

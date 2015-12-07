@@ -4,8 +4,8 @@ define worldofcontainers::profile::memcache (
 )
 
 {
-  firewall { "allow memcache connections from API Servers":
-    dport   => $port,
+  firewall { "201 allow memcache connections from API Servers":
+    dport  => $port,
     proto  => tcp,
     action => accept,
   }
@@ -13,13 +13,12 @@ define worldofcontainers::profile::memcache (
   docker::image { 'memcached':
     ensure      => 'present',
     image_tag   => 'latest',
-    require     => Class['docker'],
   }
-  docker::run { $name:
+  docker::run { "memcache-$name":
     image   => 'memcached',
     command => 'memcached -m 64',
     require => Docker::Image['memcached'],
-    ports   => [$port,11211],
+    ports   => ["$port:11211"],
   }
   }  
   Worldofcontainers::Profile::Memcache produces Cache {

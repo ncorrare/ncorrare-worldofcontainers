@@ -1,15 +1,15 @@
 define worldofcontainers::profile::http (
-  $version = $worldofcontainers::params::version,
-  $repo    = $worldofcontainers::params::repo,
+  $version = '1.0.0',
+  $repo    = 'ncorrare/worldofcontainers',
   $port    = 80,
   $host    = $::fqdn,
   $cahost,
   $iahost,
-) inherits worldofcontainers::params
+) 
 
 {
   include docker
-  firewall { "allow HTTP connections":
+  firewall { "220 allow HTTP connections":
     dport   => $port,
     proto  => tcp,
     action => accept,
@@ -19,23 +19,23 @@ define worldofcontainers::profile::http (
     creates => '/tmp/http-Dockerfile',
   }
 
-  file { '/config':
-    ensure => directory,
-  }
+  #file { '/config':
+  #  ensure => directory,
+  #}
 
   file { '/config/config.js':
     ensure  => file,
-    content => epp('config.js.epp'),
+    content => epp('worldofcontainers/config.js.epp'),
     require => File['/config'],
     }  
 
     docker::image { 'httpd':
       ensure      => 'present',
       image_tag   => '2.4',
-      require     => [Class['docker'], Exec['retrieve-dockerfile'], File['/tmp/config.js']],
+      require     => [Class['docker'], Exec['retrieve-dockerfile'], File['/config/config.js']],
       docker_file => '/tmp/http-Dockerfile',
     }
-    docker::run { $name:
+    docker::run { "httpd-$name":
       image   => 'httpd',
       command => 'init',
       require => Docker::Image['httpd'],
@@ -43,8 +43,6 @@ define worldofcontainers::profile::http (
     }
 }
 
-Worldofcontainers::Profile::Http produces Http {
-}
 Worldofcontainers::Profile::Http consumes Citiesapi {
 }
 Worldofcontainers::Profile::Http consumes Infoapi {

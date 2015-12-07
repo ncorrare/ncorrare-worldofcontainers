@@ -1,25 +1,24 @@
-define worldofcontainers::profile::api (
-  $version = $worldofcontainers::params::version,
-  $repo    = $worldofcontainers::params::repo,
+define worldofcontainers::profile::citiesapi (
+  $version = '1.0.0',
+  $repo    = 'ncorrare/worldofcontainers',
   $port    = 3000,
-  $host    = $::fqdn
+  $host    = $::fqdn,
   $dbname,
   $dbhost,
   $dbuser,
   $dbpass,
   $mchost,
-) inherits worldofcontainers::params
-
-{
+  $mcport,
+) {
   include docker
-  firewall { "allow HTTP connections from Web Servers":
-    dport   => $port,
+  firewall { "210 allow CitiesApi connections from Web Servers":
+    dport  => $port,
     proto  => tcp,
     action => accept,
   }
-  exec {'retrieve-dockerfile':
-    command => "/usr/bin/curl -O /tmp/api-Dockerfile https://raw.githubusercontent.com/$repo/$version/api/Dockerfile",
-    creates => '/tmp/api-Dockerfile',
+  exec {'retrieve-dockerfile-citiesapi':
+    command => "/usr/bin/curl https://raw.githubusercontent.com/$repo/$version/api/Dockerfile > /tmp/citiesapi-Dockerfile",
+    creates => '/tmp/citiesapi-Dockerfile',
   }
   file { '/config':
     ensure => directory,
@@ -27,36 +26,34 @@ define worldofcontainers::profile::api (
 
   file { '/config/config.yaml':
     ensure  => file,
-    content => epp('config.yaml.epp'),
+    content => epp('worldofcontainers/config.yaml.epp'),
     require => File['/config'],
   }
 
-  docker::image { 'ruby':
+  docker::image { 'citiesapi':
     ensure      => 'present',
     image_tag   => '2.2.1',
-    require     => [Class['docker'], Exec['retrieve-dockerfile'], File['/tmp/config.yaml']],
-    docker_file => '/tmp/api-Dockerfile',
+    require     => [Class['docker'], Exec['retrieve-dockerfile-citiesapi'], File['/tmp/config.yaml']],
+    docker_file => '/tmp/citiesapi-Dockerfile',
   }
 
-  docker::run { api-$name:
+  docker::run { "citiesapi-$name":
     image   => 'ruby',
     command => 'init',
-    require => Docker::Image['ruby'],
+    require => Docker::Image['citiesapi'],
     ports   => [$port,3000],
   }
 }
 
-Worldofcontainers::Profile::Api produces Citiesapi {
-  $cahost = "$host:$port",
-  $ip     = $host,
-
+Worldofcontainers::Profile::Citiesapi produces Citiesapi {
+  cahost => "$host:port"
   } 
 
-  Worldofcontainers::Profile::Api consumes Cache {
-    $mchost = $host,
-    $mcport = $port,
+  Worldofcontainers::Profile::Citiesapi consumes Cache {
+    mchost => $host,
+    mcport => $port
   }
 
-  Worldofcontainers::Profile::Api consumes Db {
+  Worldofcontainers::Profile::Citiesapi consumes Db {
   }
 

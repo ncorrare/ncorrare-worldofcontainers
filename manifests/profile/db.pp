@@ -8,8 +8,8 @@ define worldofcontainers::profile::db (
       'bind-address' => '0.0.0.0',
     }
   }
-  firewall { "allow mysql connections from API Servers":
-    dport   => 3306,
+  firewall { "200 allow mysql connections":
+    dport  => 3306,
     proto  => tcp,
     action => accept,
   }
@@ -30,7 +30,7 @@ define worldofcontainers::profile::db (
     require  => File['/tmp/schema.sql'],
   }
 }
-Worldofcontainers::profile::Db produces Db {
+Worldofcontainers::Profile::Db produces Db {
   dbuser => $dbuser,
   dbpass => $dbpass,
   dbhost => $host,
