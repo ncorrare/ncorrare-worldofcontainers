@@ -2,7 +2,7 @@ define worldofcontainers::profile::citiesapi (
   $version   = 'master',
   $repo      = 'ncorrare/worldofcontainers',
   $port      = 4000,
-  $cah       = $::fqdn,
+  $cah       = $::networking['interfaces']['enp0s8']['ip'],
   $dbname,
   $dbhost,
   $dbuser,
@@ -39,7 +39,7 @@ define worldofcontainers::profile::citiesapi (
 
   docker::run { "citiesapi-$name":
     image   => 'citiesapi',
-    command => 'ruby api.rb',
+    command => 'ruby --debug api.rb',
     require => Docker::Image['citiesapi'],
     ports   => ["$port:3000"],
     volumes => ["/config:/config:ro"],

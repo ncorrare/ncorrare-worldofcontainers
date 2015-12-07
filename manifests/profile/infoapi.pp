@@ -2,7 +2,7 @@ define worldofcontainers::profile::infoapi (
   $version   = 'master',
   $repo      = 'ncorrare/worldofcontainers',
   $port      = 3000,
-  $iah       = $::fqdn,
+  $iah       = $::networking['interfaces']['enp0s8']['ip'],
   $dbname,
   $dbhost,
   $dbuser,

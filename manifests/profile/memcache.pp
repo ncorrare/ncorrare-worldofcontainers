@@ -1,6 +1,6 @@
 define worldofcontainers::profile::memcache (
   $port = 11211,
-  $host = $::fqdn,
+  $host = $::networking['interfaces']['enp0s8']['ip'],
 )
 
 {

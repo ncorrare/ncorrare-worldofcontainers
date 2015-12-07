@@ -1,7 +1,7 @@
 define worldofcontainers::profile::db (
   $dbuser,
   $dbpass,
-  $host = $::fqdn,
+  $host = $::networking['interfaces']['enp0s8']['ip'],
 ){
   $override_options = {
     'mysqld' => {

@@ -2,7 +2,7 @@ define worldofcontainers::profile::http (
   $version = '1.0.0',
   $repo    = 'ncorrare/worldofcontainers',
   $port    = 80,
-  $host    = $::fqdn,
+  $host    = $::networking['interfaces']['enp0s8']['ip'],
   $cahost,
   $iahost,
 ) 
@@ -30,7 +30,7 @@ define worldofcontainers::profile::http (
 
     docker::image { 'httpd':
       ensure      => 'present',
-      image_tag   => '2.4',
+      image_tag   => 'latest',
       require     => [Class['docker'], Exec['retrieve-dockerfile'], File['/config/config.js']],
       docker_file => '/tmp/http-Dockerfile',
     }
