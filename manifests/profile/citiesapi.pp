@@ -1,18 +1,20 @@
-define worldofcontainers::profile::citiesapi (
-  $version = '1.0.0',
-  $repo    = 'ncorrare/worldofcontainers',
-  $port    = 3000,
-  $host    = $::fqdn,
+define worldofcontainers::profile::infoapi (
+  $version   = 'master',
+  $repo      = 'ncorrare/worldofcontainers',
+  $port      = 4000,
+  $host      = $::fqdn,
   $dbname,
   $dbhost,
   $dbuser,
   $dbpass,
   $mchost,
   $mcport,
-) {
+)
+
+{
   include docker
-  firewall { "210 allow CitiesApi connections from Web Servers":
-    dport  => $port,
+  firewall { "201 allow CitiesApi connections from Web Servers":
+    dport   => $port,
     proto  => tcp,
     action => accept,
   }
@@ -21,39 +23,37 @@ define worldofcontainers::profile::citiesapi (
     creates => '/tmp/citiesapi-Dockerfile',
   }
   file { '/config':
-    ensure => directory,
-  }
-
+    ensure  => directory,
+  } ->
   file { '/config/config.yaml':
     ensure  => file,
     content => epp('worldofcontainers/config.yaml.epp'),
-    require => File['/config'],
   }
 
   docker::image { 'citiesapi':
     ensure      => 'present',
-    image_tag   => '2.2.1',
-    require     => [Class['docker'], Exec['retrieve-dockerfile-citiesapi'], File['/tmp/config.yaml']],
+    image_tag   => 'latest',
+    require     => [Class['docker'], Exec['retrieve-dockerfile-citiesapi'], File['/config/config.yaml']],
     docker_file => '/tmp/citiesapi-Dockerfile',
   }
 
   docker::run { "citiesapi-$name":
-    image   => 'ruby',
-    command => 'init',
+    image   => 'citiesapi',
+    command => 'ruby api.rb',
     require => Docker::Image['citiesapi'],
-    ports   => [$port,3000],
+    ports   => ["$port:3000"],
+    volumes => ["/config:/config:ro"],
   }
 }
 
 Worldofcontainers::Profile::Citiesapi produces Citiesapi {
-  cahost => "$host:port"
+  iahost => "$host:$port",
   } 
 
   Worldofcontainers::Profile::Citiesapi consumes Cache {
     mchost => $host,
-    mcport => $port
+    mcport => $port,
   }
 
   Worldofcontainers::Profile::Citiesapi consumes Db {
   }
-
