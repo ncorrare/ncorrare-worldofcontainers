@@ -1,4 +1,4 @@
-define worldofcontainers::profile::infoapi (
+define worldofcontainers::profile::citiesapi (
   $version   = 'master',
   $repo      = 'ncorrare/worldofcontainers',
   $port      = 4000,
@@ -27,7 +27,7 @@ define worldofcontainers::profile::infoapi (
   } ->
   file { '/config/config.yaml':
     ensure  => file,
-    content => epp('worldofcontainers/config.yaml.epp'),
+    content => epp('worldofcontainers/config.yaml.epp', { 'dbname' => $dbname, 'dbhost' => $dbhost, 'dbuser' => $dbuser, 'dbpass' => $dbpass, 'mchost' => $mchost, 'mcport' => $mcport }),
   }
 
   docker::image { 'citiesapi':

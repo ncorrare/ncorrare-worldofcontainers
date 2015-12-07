@@ -27,7 +27,7 @@ define worldofcontainers::profile::infoapi (
   } ->
   file { '/config/config.yaml':
     ensure  => file,
-    content => epp('worldofcontainers/config.yaml.epp'),
+    content => epp('worldofcontainers/config.yaml.epp', { 'dbname' => $dbname, 'dbhost' => $dbhost, 'dbuser' => $dbuser, 'dbpass' => $dbpass, 'mchost' => $mchost, 'mcport' => $mcport }),
   }
 
   docker::image { 'infoapi':
@@ -39,9 +39,9 @@ define worldofcontainers::profile::infoapi (
 
   docker::run { "infoapi-$name":
     image   => 'infoapi',
-    command => 'init',
+    command => 'ruby api.rb',
     require => Docker::Image['infoapi'],
-    ports   => ["$port,3000"],
+    ports   => ["$port:3000"],
     volumes => ["/config:/config:ro"],
   }
 }
