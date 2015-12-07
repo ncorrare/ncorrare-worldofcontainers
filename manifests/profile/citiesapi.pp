@@ -2,7 +2,7 @@ define worldofcontainers::profile::citiesapi (
   $version   = 'master',
   $repo      = 'ncorrare/worldofcontainers',
   $port      = 4000,
-  $host      = $::fqdn,
+  $cah       = $::fqdn,
   $dbname,
   $dbhost,
   $dbuser,
@@ -47,7 +47,7 @@ define worldofcontainers::profile::citiesapi (
 }
 
 Worldofcontainers::Profile::Citiesapi produces Citiesapi {
-  iahost => "$host:$port",
+  cahost => "$cah:$port",
   } 
 
   Worldofcontainers::Profile::Citiesapi consumes Cache {

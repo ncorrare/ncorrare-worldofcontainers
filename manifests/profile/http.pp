@@ -15,7 +15,7 @@ define worldofcontainers::profile::http (
     action => accept,
   }
   exec {'retrieve-dockerfile':
-    command => "/usr/bin/curl -O /tmp/http-dockerfile https://raw.githubusercontent.com/$repo/$version/web/Dockerfile",
+    command => "/usr/bin/curl https://raw.githubusercontent.com/$repo/$version/web/Dockerfile > /tmp/http-Dockerfile",
     creates => '/tmp/http-Dockerfile',
   }
 

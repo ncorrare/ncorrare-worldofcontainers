@@ -2,7 +2,7 @@ define worldofcontainers::profile::infoapi (
   $version   = 'master',
   $repo      = 'ncorrare/worldofcontainers',
   $port      = 3000,
-  $host      = $::fqdn,
+  $iah       = $::fqdn,
   $dbname,
   $dbhost,
   $dbuser,
@@ -47,7 +47,7 @@ define worldofcontainers::profile::infoapi (
 }
 
 Worldofcontainers::Profile::Infoapi produces Infoapi {
-  iahost => "$host:$port",
+  iahost => "$iah:$port",
   } 
 
   Worldofcontainers::Profile::Infoapi consumes Cache {
